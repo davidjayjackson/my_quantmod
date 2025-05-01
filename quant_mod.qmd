@@ -1,0 +1,111 @@
+---
+title: "Quantmod: Vanguard ETF Funds"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(quantmod)
+knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
+```
+
+```{r}
+rm(list=ls())
+ETF = c("BND","BNDX","VTI","VXUS")
+getSymbols(ETF, from='2024-04-29')
+summary(BND)
+```
+
+# Basic Stock Plots
+
+```{r}
+chartSeries(BND,type="line", TA = 'addBBands(n = 20, sd = 2, maType = "SMA", draw = "bands", on = -1)',theme="white")
+
+```
+
+```{r}
+chartSeries(BND,type='line',
+            subset = "last 4 months",
+            theme="white",
+            TA = NULL)
+addSMA(n=50)
+title(main="BND Daily Close")
+            
+```
+
+```{r}
+chartSeries(BND,
+            type="line", 
+            subset = "last 4 months",
+            theme="white",
+            TA = "addSMA(n=50)")
+```
+
+## Plot "types": 
+
+* "auto" =>	Automatically chooses a chart type (default)
+* "candlesticks" =>	Classic candlestick chart with OHLC data
+* "matchsticks" =>	Similar to candlesticks, but thinner lines
+* "bars" =>	OHLC bar chart
+* "line" =>	Line chart using closing prices (or selected data)
+* "histogram" =>	Typically used for volume or other indicators
+* "ohlc"  => 	Like bars, another OHLC representation
+
+```{r}
+chartSeries(BND,
+            type="bars", 
+            subset = "last 4 months",
+            theme="white",
+            TA = "addMACD()")
+```
+
+```{r}
+chartSeries(BND,
+            type="candlestick", 
+            subset = "last 4 months",
+            theme="white",
+            TA = "addRSI()"
+            )
+```
+```{r}
+chartSeries(BND,
+            type="matchsticks", 
+            subset = "last 4 months",
+            theme="white",
+            TA = "addMACD()")
+```
+
+# Dividends Since 2020
+
+```{r}
+divs <- getDividends("BND", from = "2022-01-01")
+plot(divs, main = "BNDX Dividend History", ylab = "Dividend ($)", col = "darkgreen", type = "h")
+hist(divs)
+```
+
+# Returns Daily, Weekly and Monthly
+
+```{r}
+dr <- dailyReturn(BND)
+plot(dr)
+boxplot(dr)
+hist(dr)
+```
+```{r}
+wr <- weeklyReturn(BND)
+plot(wr)
+boxplot(wr)
+hist(wr)
+```
+
+```{r}
+mr <- monthlyReturn(BND)
+plot(mr)
+boxplot(mr)
+hist(mr)
+```
+
