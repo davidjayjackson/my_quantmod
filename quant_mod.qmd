@@ -10,30 +10,37 @@ editor: visual
 #| warning: false
 
 library(quantmod)
+library(alphavantager)
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 ```
 
 ```{r}
 rm(list=ls())
+
+source("./alpha_vantage.R")
 ETF = c("BND","BNDX","VTI","VXUS")
-getSymbols(ETF, from='2024-04-29')
-summary(BND)
+getSymbols("BND", src = "av", api.key = av_api_key)
 ```
 
 # Basic Stock Plots
 
 ```{r}
-chartSeries(BND,type="line", TA = 'addBBands(n = 20, sd = 2, maType = "SMA", draw = "bands", on = -1)',theme="white")
-
+chartSeries(BND,
+            subset="last 30 days",
+            TA= NULL,
+            name="Vandgauar BND ETF(last 30 days")
+addSMA(n=20)
 ```
+
+
 
 ```{r}
 chartSeries(BND,type='line',
             subset = "last 4 months",
             theme="white",
             TA = NULL)
-addSMA(n=50)
-title(main="BND Daily Close")
+addSMA(n=20)
+
             
 ```
 
@@ -42,18 +49,26 @@ chartSeries(BND,
             type="line", 
             subset = "last 4 months",
             theme="white",
-            TA = "addSMA(n=50)")
+            TA = "addSMA(n=20)")
+```
+```{r}
+# chartSeries(BND,type="line", TA = 'addBBands(n = 20, sd = 2, maType = "SMA", draw = "bands", on = -1)',theme="white")
+chartSeries(BND,
+            type="line", 
+            TA = 'addBBands()',
+            theme="white",
+            subset="last 60 days")
 ```
 
-## Plot "types": 
+## Plot "types":
 
-* "auto" =>	Automatically chooses a chart type (default)
-* "candlesticks" =>	Classic candlestick chart with OHLC data
-* "matchsticks" =>	Similar to candlesticks, but thinner lines
-* "bars" =>	OHLC bar chart
-* "line" =>	Line chart using closing prices (or selected data)
-* "histogram" =>	Typically used for volume or other indicators
-* "ohlc"  => 	Like bars, another OHLC representation
+-   "auto" =\> Automatically chooses a chart type (default)
+-   "candlesticks" =\> Classic candlestick chart with OHLC data
+-   "matchsticks" =\> Similar to candlesticks, but thinner lines
+-   "bars" =\> OHLC bar chart
+-   "line" =\> Line chart using closing prices (or selected data)
+-   "histogram" =\> Typically used for volume or other indicators
+-   "ohlc" =\> Like bars, another OHLC representation
 
 ```{r}
 chartSeries(BND,
@@ -71,6 +86,7 @@ chartSeries(BND,
             TA = "addRSI()"
             )
 ```
+
 ```{r}
 chartSeries(BND,
             type="matchsticks", 
@@ -95,6 +111,7 @@ plot(dr)
 boxplot(dr)
 hist(dr)
 ```
+
 ```{r}
 wr <- weeklyReturn(BND)
 plot(wr)
@@ -108,4 +125,3 @@ plot(mr)
 boxplot(mr)
 hist(mr)
 ```
-
